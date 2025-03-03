@@ -3,31 +3,28 @@ package translation
 import (
 	"testing"
 
-	//	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 	"go.temporal.io/sdk/testsuite"
 )
 
-func IGNORETestSuccessfulCompleteFrenchTranslation(t *testing.T) {
+func TestSuccessfulCompleteFrenchTranslation(t *testing.T) {
 	s := testsuite.WorkflowTestSuite{}
 
 	env := s.NewTestWorkflowEnvironment()
 	env.RegisterActivity(TranslateTerm)
 
 	workflowInput := TranslationWorkflowInput{
-		Name:         "Pierre",
+		Name:         "William",
 		LanguageCode: "fr",
 	}
 
 	env.ExecuteWorkflow(SayHelloGoodbye, workflowInput)
 
-	// TODO: Assert that Workflow Execution completed
+	assert.True(t, env.IsWorkflowCompleted())
 
 	var result TranslationWorkflowOutput
 	env.GetWorkflowResult(&result)
 
-	// TODO: Assert that the HelloMessage field in the
-	//       result is: Bonjour, Pierre
-
-	// TODO: Assert that the GoodbyeMessage field in the
-	//       result is: Au revoir, Pierre
+	assert.Equal(t, "Bonjour, William", result.HelloMessage)
+	assert.Equal(t, "Au revoir, William", result.GoodbyeMessage)
 }
